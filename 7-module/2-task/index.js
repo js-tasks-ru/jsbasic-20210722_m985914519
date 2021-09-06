@@ -2,11 +2,14 @@ import createElement from '../../assets/lib/create-element.js';
 
 export default class Modal {
   constructor() {
+    this.render();
+    this.closeModalButton = this.elem.querySelector('.modal__close')
+    this.closeModalButton.addEventListener('click', this.closeByButton)
+    document.addEventListener('keydown', this.closeByButton)
   }
 
-  open() {
-    document.body.classList.add('is-modal-open')
-    document.body.insertAdjacentHTML('afterbegin',`
+  render() {
+    this.elem = createElement(`
       <div class="modal">
         <div class="modal__overlay"></div>
 
@@ -17,33 +20,40 @@ export default class Modal {
             </button>
 
             <h3 class="modal__title">
-              ${this.modalTitle}
             </h3>
           </div>
-
           <div class="modal__body">
           </div>
         </div>
-      </div>`)
-    document.body.querySelector('.modal__body').appendChild(this.modalBody)
-
-    this.closeModalButton = document.body.querySelector('.modal__close')
-    this.closeModalButton.addEventListener('click', this.close)
-    document.addEventListener('keydown', this.close)
+      </div>
+    `);
   }
 
-  setTitle(title) {
-    this.modalTitle = title
+  open() {
+    document.body.append(this.elem);
+    document.body.classList.add('is-modal-open');
+  }
+
+  setTitle(text) {
+    this.elem.querySelector('.modal__title').textContent = text;
   }
   setBody(node) {
-    this.modalBody = node
+    this.elem.querySelector('.modal__body').textContent = '';
+    this.elem.querySelector('.modal__body').append(node);
   }
-  close = (event) => {
+
+  closeByButton = (event) => {
     if (event.code === 'Escape' || !event.code) {
-    document.body.classList.remove('is-modal-open')
-    document.body.querySelector('.modal').remove()
+      document.body.classList.remove('is-modal-open')
+      document.body.querySelector('.modal').remove()
     }
-    this.closeModalButton.removeEventListener('click', this.close)
-    document.removeEventListener('keydown', this.close)
+    document.removeEventListener('keydown', this.closeByButton)
+  }
+
+  close() {
+    if (document.querySelector('.modal')) {
+      document.body.querySelector('.modal').remove();
+      document.body.classList.remove('is-modal-open');
+    }
   }
 }
