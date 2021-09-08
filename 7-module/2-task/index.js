@@ -54,6 +54,7 @@ export default class Modal {
     if (document.querySelector('.modal')) {
       document.body.querySelector('.modal').remove();
       document.body.classList.remove('is-modal-open');
+      document.removeEventListener('keydown', this.closeByButton)
     }
   }
 }

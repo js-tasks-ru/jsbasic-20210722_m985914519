@@ -5,8 +5,6 @@ export default class StepSlider {
     this.thumb = this.elem.querySelector('.slider__thumb');
     this.progress = this.elem.querySelector('.slider__progress');
     this.thumb.ondragstart = () => false;
-    this.thumb.pointerdown = () => false;
-    this.thumb.pointermove = () => false;
     this.thumb.addEventListener('pointerdown', this.dragSlider);
     this.elem.addEventListener('click', this.changeSlider);
   }
@@ -55,7 +53,8 @@ export default class StepSlider {
   }
 
   dragSlider = (event) => {
-    event.preventDefault();
+    this.thumb.pointerdown = () => false;
+    this.thumb.pointermove = () => false;
     this.elem.classList.add('slider_dragging')
     this.thumb.style.position = 'absolute';
     this.thumb.style.zIndex = 1000;
@@ -82,9 +81,12 @@ export default class StepSlider {
   dropSlider = (event) => {
     this.elem.classList.remove('slider_dragging')
     document.removeEventListener('pointermove', this.move);
-    document.onpointerup = null;
+    document.removeEventListener('pointerup', this.dropSlider);
 
     let sliderСoordinateX = event.clientX - this.elem.getBoundingClientRect().left
+    if (sliderСoordinateX < 0 || sliderСoordinateX > this.elem.getBoundingClientRect().width) {
+      return;
+    }
     let oneStep = this.elem.offsetWidth / (this.config.steps - 1)
     let numberStep = Math.round(sliderСoordinateX / oneStep)
     let spans = this.elem.querySelector('.slider__steps').querySelectorAll('span')
