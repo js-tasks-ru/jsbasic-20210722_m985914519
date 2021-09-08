@@ -88,10 +88,11 @@ export default class StepSlider {
     let oneStep = this.elem.offsetWidth / (this.config.steps - 1)
     let numberStep = Math.round(sliderСoordinateX / oneStep)
     let spans = this.elem.querySelector('.slider__steps').querySelectorAll('span')
-    spans[this.config.value].classList.remove('slider__step-active')
-    this.config.value = numberStep
-    spans[this.config.value].classList.add('slider__step-active')
-
+    if (spans[this.config.value]) {
+      spans[this.config.value].classList.remove('slider__step-active')
+      this.config.value = numberStep
+      spans[this.config.value].classList.add('slider__step-active')
+    }
     let leftPercents = 100 / (this.config.steps - 1) * numberStep;
     this.thumb.style.left = `${leftPercents}%`;
     this.progress.style.width = `${leftPercents}%`;
